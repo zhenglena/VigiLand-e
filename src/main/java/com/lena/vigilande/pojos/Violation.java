@@ -6,9 +6,6 @@ import java.time.LocalDate;
 
 //todo: make a builder?
 public class Violation {
-    private String id;
-    private String address;
-
     @JsonProperty("violation_date")
     private LocalDate violationDate;
     @JsonProperty("violation_code")
@@ -21,22 +18,12 @@ public class Violation {
     private String violationStatus;
 
 
-    public Violation(String id, LocalDate violationDate, String violationCode, String violationDescription, String violationInspectorComments, String violationStatus, String address) {
-        this.id = id;
+    public Violation(LocalDate violationDate, String violationCode, String violationDescription, String violationInspectorComments, String violationStatus) {
         this.violationDate = violationDate;
         this.violationCode = violationCode;
         this.violationDescription = violationDescription;
         this.violationInspectorComments = violationInspectorComments;
         this.violationStatus = violationStatus;
-        this.address = address;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public LocalDate getViolationDate() {
@@ -79,11 +66,4 @@ public class Violation {
         this.violationStatus = violationStatus;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }
