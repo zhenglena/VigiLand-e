@@ -14,9 +14,10 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
-@Service
+//todo: implement batch writing, perhaps in a dao?
+//todo: ensure that the data being read will match schema for varchar
+
 public class IngestService {
 
     private static final Logger log = LogManager.getLogger(IngestService.class);
@@ -29,7 +30,7 @@ public class IngestService {
     /**
      * Reads from the Building Violations CSV file and writes to Postgres db.
      * @param csvFilePath String path to Building Violations CSV
-     * @throws IOException- If an I/O error occurs opening the file
+     * @throws IOException- If an I/O error occurs opening the filew
      */
     public void ViolationsReader(String csvFilePath) throws IOException {
         try (
@@ -42,14 +43,14 @@ public class IngestService {
                 String violation_code = record.get("VIOLATION CODE");
                 String violation_status = record.get("VIOLATION STATUS");
                 String violation_description = record.get("VIOLATION DESCRIPTION");
-                String violation_inspector_comment = record.get("VIOLATION INSPECTOR COMMENT");
+                String violation_inspector_comment = record.get("VIOLATION INSPECTOR COMMENTS");
 
                 LocalDate violation_date = DateParser.parseDate(record.get("VIOLATION DATE"));
 
                 String address = record.get("ADDRESS").trim().toUpperCase();
 
                 String sqlCommand = "INSERT INTO Violations(id, violation_date, violation_code, violation_status, " +
-                        "violation_description, violation_inspector_comment, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                        "violation_description, violation_inspector_comments, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                 template.update(sqlCommand, id, violation_date, violation_code, violation_status,
                         violation_description, violation_inspector_comment, address);
