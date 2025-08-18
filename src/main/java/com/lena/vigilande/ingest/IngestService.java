@@ -27,9 +27,9 @@ public class IngestService {
     }
 
     /**
-     * Reads from the Building Violations CSV file and
-     * @param csvFilePath
-     * @throws IOException
+     * Reads from the Building Violations CSV file and writes to Postgres db.
+     * @param csvFilePath String path to Building Violations CSV
+     * @throws IOException- If an I/O error occurs opening the file
      */
     public void ViolationsReader(String csvFilePath) throws IOException {
         try (
@@ -46,9 +46,7 @@ public class IngestService {
 
                 LocalDate violation_date = DateParser.parseDate(record.get("VIOLATION DATE"));
 
-                //TODO: PARSE ADDRESS?
-                String address = record.get("ADDRESS");
-
+                String address = record.get("ADDRESS").trim().toUpperCase();
 
                 String sqlCommand = "INSERT INTO Violations(id, violation_date, violation_code, violation_status, " +
                         "violation_description, violation_inspector_comment, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -59,6 +57,11 @@ public class IngestService {
         }
     }
 
+    /**
+     * Reads from the Scofflaw List CSV file and writes to Postgres db.
+     * @param csvFilePath String path to Scofflaws List CSV
+     * @throws IOException- If an I/O error occurs opening the file
+     */
     public void ScofflawsReader(String csvFilePath) throws IOException {
         try (
                 Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
@@ -67,10 +70,10 @@ public class IngestService {
         ) {
             for (CSVRecord record : csvParser) {
                 String record_id = record.get("RECORD ID");
-                //TODO: PARSE DATE
-                String building_list_date = record.get("BUILDING LIST DATE"); //date comes in as MM/DD/YYYY
-                //TODO: PARSE ADDRESS?
-                String address = record.get("ADDRESS");
+
+                LocalDate building_list_date = DateParser.parseDate(record.get("BUILDING LIST DATE"));
+
+                String address = record.get("ADDRESS").trim().toUpperCase();
 
                 String sqlCommand = "INSERT INTO Scofflaws(record_id, building_list_date, address) VALUES (?, ?, ?)";
 
