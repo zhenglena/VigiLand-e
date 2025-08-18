@@ -22,7 +22,7 @@ CREATE INDEX scofflaws_list_date_index ON Scofflaws(building_list_date);
 CREATE TABLE Comments (
   	comment_id SERIAL PRIMARY KEY,
 	author VARCHAR(15),
-  	date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   	address VARCHAR(100),
   	comment TEXT
 );
