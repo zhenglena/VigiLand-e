@@ -1,10 +1,13 @@
 package com.lena.vigilande.pojos;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
 public class Comment {
     private String author;
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
     private String address;
     private String comment;

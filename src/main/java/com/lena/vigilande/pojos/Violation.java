@@ -1,20 +1,29 @@
 package com.lena.vigilande.pojos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 
 //todo: make a builder?
 public class Violation {
     private String id;
-    private LocalDate date;
-    private String violationCode;
-    private String violationDescription;
-    private String violationInspectorComments;
-    private String violationStatus;
     private String address;
 
-    public Violation(String id, LocalDate date, String violationCode, String violationDescription, String violationInspectorComments, String violationStatus, String address) {
+    @JsonProperty("violation_date")
+    private LocalDate violationDate;
+    @JsonProperty("violation_code")
+    private String violationCode;
+    @JsonProperty("violation_description")
+    private String violationDescription;
+    @JsonProperty("violation_inspector_comments")
+    private String violationInspectorComments;
+    @JsonProperty("violation_status")
+    private String violationStatus;
+
+
+    public Violation(String id, LocalDate violationDate, String violationCode, String violationDescription, String violationInspectorComments, String violationStatus, String address) {
         this.id = id;
-        this.date = date;
+        this.violationDate = violationDate;
         this.violationCode = violationCode;
         this.violationDescription = violationDescription;
         this.violationInspectorComments = violationInspectorComments;
@@ -30,12 +39,12 @@ public class Violation {
         this.id = id;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getViolationDate() {
+        return violationDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setViolationDate(LocalDate violationDate) {
+        this.violationDate = violationDate;
     }
 
     public String getViolationCode() {
