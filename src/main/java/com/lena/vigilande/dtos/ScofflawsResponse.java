@@ -1,15 +1,17 @@
 package com.lena.vigilande.dtos;
 
+import com.lena.vigilande.pojos.Scofflaw;
+
 import java.util.List;
 
 public class ScofflawsResponse {
-    private List<String> addresses;
+    private List<Scofflaw> scofflaws;
 
-    public ScofflawsResponse(List<String> addresses) {
-        this.addresses = addresses;
+    public ScofflawsResponse(List<Scofflaw> scofflaws) {
+        this.scofflaws = scofflaws;
     }
 
-    public List<String> getAddresses() {
-        return addresses;
+    public List<Scofflaw> getScofflaws() {
+        return scofflaws;
     }
 }
