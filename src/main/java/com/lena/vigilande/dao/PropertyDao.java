@@ -18,8 +18,8 @@ public class PropertyDao {
     }
 
     public List<Violation> findViolationsByAddress(String address) {
-        String sql = "SELECT v.violation_date, v.violation_code, v.violation_description, v.violation_inspector_comments," +
-                "v.violation_status FROM Violations v WHERE address = ?";
+        String sql = "SELECT violation_date, violation_code, violation_description, violation_inspector_comments," +
+                "violation_status FROM Violations WHERE address = ? ORDER BY violation_date DESC";
         return template.query(sql, new Object[]{address},
                 (rs, rowNum) -> new Violation(
                                         rs.getDate("violation_date").toLocalDate(),
