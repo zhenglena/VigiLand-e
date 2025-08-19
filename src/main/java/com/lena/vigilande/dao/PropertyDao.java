@@ -22,7 +22,7 @@ public class PropertyDao {
 
     /**
      * Queries the Violations table with a given address.
-     * @param address the address queried
+     * @param address the address to query
      * @return a list of violations associated with the address. Returns an empty list if no violations are found.
      */
     public List<Violation> findViolationsByAddress(String address) {
@@ -38,6 +38,11 @@ public class PropertyDao {
                 ));
     }
 
+    /**
+     * Queries the Scofflaws table with a given address.
+     * @param address the address to query
+     * @return a Scofflaw result
+     */
     public Scofflaw findScofflawByAddress(String address) {
        String sql = "SELECT s.building_list_date FROM Scofflaws s WHERE address = ? LIMIT 1";
 
@@ -53,6 +58,11 @@ public class PropertyDao {
 
     }
 
+    /**
+     * Queries the Scofflaws table with a given date (inclusive).
+     * @param fromDate the date to query
+     * @return a List of Scofflaws
+     */
     public List<Scofflaw> findScofflawsByDate(LocalDate fromDate) {
         String sql = "SELECT s.address, s.building_list_date FROM Scofflaws s WHERE s.building_list_date >= ?";
 
@@ -63,6 +73,12 @@ public class PropertyDao {
                 ));
     }
 
+    /**
+     * Inserts a comment into the Comments table.
+     * @param address the address of tied to the comment
+     * @param request the request body containing the author and the comment to be inserted
+     * @return an integer of rows affected by the insertion
+     */
     public int createCommentWithAddress(String address, CommentsRequest request) {
         String sql = "INSERT INTO Comments(author, address, comment) VALUES (?, ?, ?)";
 
