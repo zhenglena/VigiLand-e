@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Profile("ingest")
 public class IngestRunner implements CommandLineRunner {
     private static final Logger log = LogManager.getLogger(IngestRunner.class);
+
     private IngestService script;
 
     public IngestRunner(IngestService script) {
