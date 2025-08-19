@@ -3,6 +3,7 @@ package com.lena.vigilande.pojos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 //todo: make a builder?
 public class Violation {
@@ -66,4 +67,16 @@ public class Violation {
         this.violationStatus = violationStatus;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Violation violation = (Violation) o;
+        return Objects.equals(getViolationDate(), violation.getViolationDate()) && Objects.equals(getViolationCode(), violation.getViolationCode()) && Objects.equals(getViolationDescription(), violation.getViolationDescription()) && Objects.equals(getViolationInspectorComments(), violation.getViolationInspectorComments()) && Objects.equals(getViolationStatus(), violation.getViolationStatus());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getViolationDate(), getViolationCode(), getViolationDescription(), getViolationInspectorComments(), getViolationStatus());
+    }
 }

@@ -3,6 +3,7 @@ package com.lena.vigilande.dao;
 import com.lena.vigilande.dtos.CommentsRequest;
 import com.lena.vigilande.pojos.Scofflaw;
 import com.lena.vigilande.pojos.Violation;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +20,11 @@ public class PropertyDao {
         this.template = template;
     }
 
+    /**
+     * Queries the Violations table with a given address.
+     * @param address the address queried
+     * @return a list of violations associated with the address. Returns an empty list if no violations are found.
+     */
     public List<Violation> findViolationsByAddress(String address) {
         String sql = "SELECT violation_date, violation_code, violation_description, violation_inspector_comments," +
                 "violation_status FROM Violations WHERE address = ? ORDER BY violation_date DESC";
@@ -34,11 +40,17 @@ public class PropertyDao {
 
     public Scofflaw findScofflawByAddress(String address) {
        String sql = "SELECT s.building_list_date FROM Scofflaws s WHERE address = ? LIMIT 1";
-       return template.queryForObject(sql, new Object[]{address},
-               (rs, rowNum) -> new Scofflaw(
-                       address,
-                       rs.getDate("building_list_date").toLocalDate()
-               ));
+
+       try {
+           return template.queryForObject(sql, new Object[]{address},
+                   (rs, rowNum) -> new Scofflaw(
+                           address,
+                           rs.getDate("building_list_date").toLocalDate()
+                   ));
+       } catch (EmptyResultDataAccessException e) {
+           return null;
+       }
+
     }
 
     public List<Scofflaw> findScofflawsByDate(LocalDate fromDate) {
