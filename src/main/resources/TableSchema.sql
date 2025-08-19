@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Violations(
 
 CREATE INDEX IF NOT EXISTS violations_address_index ON Violations(address);
 
-CREATE TABLE Scofflaws(
+CREATE TABLE IF NOT EXISTS Scofflaws(
 	record_id VARCHAR(30) PRIMARY KEY,
   	address VARCHAR(100),
   	building_list_date DATE
