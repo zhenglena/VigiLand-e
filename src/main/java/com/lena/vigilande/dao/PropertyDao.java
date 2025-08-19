@@ -4,11 +4,13 @@ import com.lena.vigilande.dtos.CommentsRequest;
 import com.lena.vigilande.pojos.Scofflaw;
 import com.lena.vigilande.pojos.Violation;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 
 //TODO: handle exceptions or null results
+@Repository
 public class PropertyDao {
 
     private final JdbcTemplate template;
