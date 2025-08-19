@@ -18,6 +18,7 @@ import java.time.LocalDate;
 //todo: implement batch writing, perhaps in a dao?
 //todo: ensure that the data being read will match schema for varchar
 
+@Service
 public class IngestService {
 
     private static final Logger log = LogManager.getLogger(IngestService.class);
@@ -32,7 +33,7 @@ public class IngestService {
      * @param csvFilePath String path to Building Violations CSV
      * @throws IOException- If an I/O error occurs opening the filew
      */
-    public void ViolationsReader(String csvFilePath) throws IOException {
+    public void ingestToViolations(String csvFilePath) throws IOException {
         try (
             Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
@@ -63,7 +64,7 @@ public class IngestService {
      * @param csvFilePath String path to Scofflaws List CSV
      * @throws IOException- If an I/O error occurs opening the file
      */
-    public void ScofflawsReader(String csvFilePath) throws IOException {
+    public void ingestToScofflaws(String csvFilePath) throws IOException {
         try (
                 Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
                 CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
