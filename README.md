@@ -1,0 +1,148 @@
+<br />
+<div align="center">
+<h1 align="center">VigiLand-e API</h1>
+
+  <p align="center">
+    A simple API to query the City of Chicago's Building Violations and Building Code Scofflaws List (for tenant vigilante use ONLY).
+  </p>
+</div>
+
+# About this API
+This project is a Spring Boot REST API for working with Chicago building code enforcement data. It provides endpoints to query:
+* Scofflaw properties — buildings and their owners flagged as chronic code violators.
+* Building violations — recorded code violations tied to specific addresses.
+
+and provides an additional endpoint for a user to write their own comment tied to a specific address.
+
+## Setup
+### Requirements:
+* Java JRE and JDK 17+
+* PostgreSQL installed and running
+### Step 1: Create a database
+* Run these commands in your terminal:
+``` 
+psql -U postgres
+CREATE DATABASE vigilande_db;
+\q
+```
+### Step 2: Configure credentials in application.properties
+```
+spring.application.name=vigilande
+spring.datasource.url=jdbc:postgresql://localhost:5432/vigilande_db
+spring.datasource.username=<username> <-- your username
+spring.datasource.password=<password> <-- your password
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.sql.init.mode=always
+spring.sql.init.schema-locations=classpath:TableSchema.sql
+```
+
+### Step 3: Run ingestion script
+```
+./gradlew bootRun --args='--spring.profiles.active=ingest'
+```
+
+### Step 4: Run main application
+```
+./gradlew bootRun
+```
+
+## Integration Test Setup
+### Step 1: Create a test database
+* Run these commands in your terminal:
+``` 
+psql -U postgres
+CREATE DATABASE vigilande_db_test;
+\q
+```
+### Step 2: Configure datasource in application.properties
+```
+spring.application.name=vigilande
+spring.datasource.url=jdbc:postgresql://localhost:5432/vigilande_db_test <-- new
+spring.datasource.username=<username> <-- your username
+spring.datasource.password=<password> <-- your password
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.sql.init.mode=always
+spring.sql.init.schema-locations=classpath:TableSchema.sql
+```
+### Step 3: Feed the test CSV file paths into IngestRunner.java
+```
+script.ingestToScofflaws("datasets/Scofflaw_list_TEST.csv");
+script.ingestToViolations("datasets/Building_Violations_TEST.csv");
+```
+### Step 4: Run ingestion script
+```
+./gradlew bootRun --args='--spring.profiles.active=ingest'
+```
+### Step 5: Run main application
+```
+./gradlew bootRun
+```
+
+## Built With
+* Spring Boot
+* PostgreSQL JDBC Driver
+* ApacheCommonsCSV
+
+# Design
+## Architecture
+This system follows standard Spring Boot conventions.
+### Controller Layer
+* `PropertyController.java` — Defines REST endpoints for querying scofflaws and violations by address and date.
+
+### Service Layer
+
+* `PropertyService.java` — Encapsulates business logic and orchestrates between the controller and DAO.
+
+### DAO Layer
+
+* `PropertyDao.java` — Executes SQL queries using JdbcTemplate.
+
+### Database Layer
+* PostgreSQL stores three tables: Violations, Scofflaws, and Comments.
+* Schema is defined in resources/TableSchema.sql
+
+## Database
+### Violations Table
+```
+id : varchar (PK)
+violation_date : date
+violation_code : varchar
+violation_status : varchar
+violation_description : text
+violation_inspector_comments : text
+address : varchar 
+```
+
+### Scofflaws Table
+```
+record_id : varchar (PK)
+address : varchar
+building_list_date : date
+```
+
+### Comments Table
+```
+comment_id : serial (PK)
+author : varchar
+created_at : timestamp
+address : varchar
+comment : text
+```
+## Data Flow
+### 1: Data Ingestion
+* On startup (with `Ingest` profile active), the `IngestRunner` executes and loads CSV data into the database using `IngestService`.
+
+### 2: API Requests
+* A client (`cURL`) makes an HTTP request to a controller endpoint.
+* Controller endpoint passes the request to the service.
+* Service calls DAO, which uses JDBCTemplate to query PostgreSQL.
+* Results are passed back up and returned to the client as a JSON.
+
+## Profiles
+* `ingest` profile — Loads the dataset into the database and then exits when done.
+* default profile — Runs the application normally, exposing the API.
+
+
+
