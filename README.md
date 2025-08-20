@@ -12,7 +12,7 @@ This project is a Spring Boot REST API for working with Chicago building code en
 * Scofflaw properties — buildings and their owners flagged as chronic code violators.
 * Building violations — recorded code violations tied to specific addresses.
 
-and provides an additional endpoint for a user to write their own comment tied to a specific address.
+and provides an additional endpoint for a user to write their own comment tied to a specific address (a signal for help, maybe?).
 
 ## Setup
 ### Requirements:
