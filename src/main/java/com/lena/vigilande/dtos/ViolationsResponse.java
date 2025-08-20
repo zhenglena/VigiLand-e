@@ -1,5 +1,6 @@
 package com.lena.vigilande.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lena.vigilande.pojos.Violation;
 
 import java.time.LocalDate;
@@ -7,9 +8,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class ViolationsResponse {
+    @JsonProperty("last_violation_date")
     private LocalDate lastViolationDate;
+    @JsonProperty("total_violation_count")
     private int totalViolationCount;
+    @JsonProperty("violation_list")
     private List<Violation> violationList;
+    @JsonProperty("scofflaw_status")
     private boolean scofflawStatus;
 
     public ViolationsResponse(LocalDate lastViolationDate, int totalViolationCount, List<Violation> violationList, boolean scofflawStatus) {
