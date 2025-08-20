@@ -75,10 +75,7 @@ script.ingestToViolations("datasets/Building_Violations_TEST.csv");
 ```
 ./gradlew bootRun --args='--spring.profiles.active=ingest'
 ```
-### Step 5: Run main application
-```
-./gradlew bootRun
-```
+### Step 5: Run tests
 
 ## Built With
 * Spring Boot
@@ -97,7 +94,7 @@ This system follows standard Spring Boot conventions.
 
 ### DAO Layer
 
-* `PropertyDao.java` — Executes SQL queries using JdbcTemplate.
+* `PropertyDao.java` — Executes SQL queries to database tables using JdbcTemplate.
 
 ### Database Layer
 * PostgreSQL stores three tables: Violations, Scofflaws, and Comments.
@@ -132,17 +129,20 @@ comment : text
 ```
 ## Data Flow
 ### 1: Data Ingestion
-* On startup (with `Ingest` profile active), the `IngestRunner` executes and loads CSV data into the database using `IngestService`.
+* On startup, `TableSchema.sql` is automatically run by Spring Boot and creates tables in the database.
+* With `ingest` profile active, `IngestRunner` executes and loads CSV data into the database using `IngestService`.
 
 ### 2: API Requests
 * A client (`cURL`) makes an HTTP request to a controller endpoint.
 * Controller endpoint passes the request to the service.
 * Service calls DAO, which uses JDBCTemplate to query PostgreSQL.
-* Results are passed back up and returned to the client as a JSON.
+* Results are passed back up as responses and returned to the client as a JSON.
 
 ## Profiles
 * `ingest` profile — Loads the dataset into the database and then exits when done.
 * default profile — Runs the application normally, exposing the API.
+
+## Future Improvements
 
 
 
