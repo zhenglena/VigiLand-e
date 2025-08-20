@@ -1,6 +1,6 @@
 package com.lena.vigilande.ingest;
 
-import com.lena.vigilande.util.DateParser;
+import com.lena.vigilande.util.PathInputParser;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 
 //todo: implement batch writing, perhaps in a dao?
-//todo: ensure that the data being read will match schema for varchar
 
 @Service
 public class IngestService {
@@ -46,7 +45,7 @@ public class IngestService {
                 String violation_description = record.get("VIOLATION DESCRIPTION");
                 String violation_inspector_comment = record.get("VIOLATION INSPECTOR COMMENTS");
 
-                LocalDate violation_date = DateParser.parseDate(record.get("VIOLATION DATE"));
+                LocalDate violation_date = PathInputParser.parseDateFromCsv(record.get("VIOLATION DATE"));
 
                 String address = record.get("ADDRESS").trim().toUpperCase();
 
@@ -73,7 +72,7 @@ public class IngestService {
             for (CSVRecord record : csvParser) {
                 String record_id = record.get("RECORD ID");
 
-                LocalDate building_list_date = DateParser.parseDate(record.get("BUILDING LIST DATE"));
+                LocalDate building_list_date = PathInputParser.parseDateFromCsv(record.get("BUILDING LIST DATE"));
 
                 String address = record.get("ADDRESS").trim().toUpperCase();
 
