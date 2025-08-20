@@ -37,12 +37,6 @@ public class PropertyServiceTest {
     }
     @Test
     public void getViolationsResponseByAddress_successful_returnsViolationsResponse() {
-        ViolationsResponse expectedResponse = new ViolationsResponse(
-                LocalDate.of(2025, Month.AUGUST, 15),
-                4,
-                TestHelpers.EXPECTED_VIOLATION_LIST,
-                false
-        );
         String address = TestHelpers.VIOLATION_ADDRESS;
         when(dao.findViolationsByAddress(address)).thenReturn(TestHelpers.EXPECTED_VIOLATION_LIST);
         when(dao.findScofflawByAddress(address)).thenReturn(null);
@@ -50,7 +44,7 @@ public class PropertyServiceTest {
         Optional<ViolationsResponse> actualResponse = service.getViolationsResponseByAddress(address);
 
         assertTrue(actualResponse.isPresent());
-        assertEquals(expectedResponse, actualResponse.get());
+        assertEquals(TestHelpers.EXPECTED_VIOLATIONS_RESPONSE, actualResponse.get());
     }
 
     @Test

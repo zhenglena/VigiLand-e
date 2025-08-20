@@ -1,5 +1,6 @@
 package com.lena.vigilande.helpers;
 
+import com.lena.vigilande.dtos.ViolationsResponse;
 import com.lena.vigilande.pojos.Scofflaw;
 import com.lena.vigilande.pojos.Violation;
 
@@ -46,6 +47,13 @@ public class TestHelpers {
             VIOLATION2,
             VIOLATION3,
             VIOLATION4
+    );
+
+    public static final ViolationsResponse EXPECTED_VIOLATIONS_RESPONSE = new ViolationsResponse(
+            LocalDate.of(2025, Month.AUGUST, 15),
+            4,
+            TestHelpers.EXPECTED_VIOLATION_LIST,
+            false
     );
 
     public static final String SCOFFLAW_ADDRESS = "4230 S MICHIGAN AVE";
