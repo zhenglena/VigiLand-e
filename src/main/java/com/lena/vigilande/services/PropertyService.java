@@ -7,8 +7,6 @@ import com.lena.vigilande.dtos.ViolationsResponse;
 import com.lena.vigilande.mappers.ViolationsMapper;
 import com.lena.vigilande.pojos.Scofflaw;
 import com.lena.vigilande.pojos.Violation;
-import com.lena.vigilande.util.PathInputParser;
-import com.lena.vigilande.util.PathInputChecker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
