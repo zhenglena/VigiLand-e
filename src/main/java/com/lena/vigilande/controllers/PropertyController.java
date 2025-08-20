@@ -4,14 +4,13 @@ import com.lena.vigilande.dtos.CommentsRequest;
 import com.lena.vigilande.dtos.ScofflawsResponse;
 import com.lena.vigilande.dtos.ViolationsResponse;
 import com.lena.vigilande.services.PropertyService;
+import com.lena.vigilande.util.PathInputParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
@@ -28,7 +27,8 @@ public class PropertyController {
      */
     @GetMapping("/{address}")
     public ResponseEntity<?> getViolationsResponseByAddress(@PathVariable String address) {
-        Optional<ViolationsResponse> response = propertyService.getViolationsResponseByAddress(address.trim().toUpperCase());
+        Optional<ViolationsResponse> response =
+                propertyService.getViolationsResponseByAddress(PathInputParser.parseStringFromUrl(address));
         if (response.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -41,8 +41,8 @@ public class PropertyController {
      * @return 200 OK
      */
     @GetMapping("/scofflaws/violations")
-    public ResponseEntity<?> getScofflawsByDate(@RequestParam("since") @DateTimeFormat(pattern = "uuuu-MM-dd") LocalDate fromDate) {
-        Optional<ScofflawsResponse> response = propertyService.getScofflawsByDate(fromDate);
+    public ResponseEntity<?> getScofflawsByDate(@RequestParam("since") String fromDate) {
+        Optional<ScofflawsResponse> response = propertyService.getScofflawsByDate(PathInputParser.parseDateFromUrl(fromDate));
         if (response.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -57,7 +57,8 @@ public class PropertyController {
      */
     @PostMapping("/{address}/comments")
     public ResponseEntity<?> createCommentWithAddress(@PathVariable String address, @RequestBody CommentsRequest commentsRequest) {
-        boolean created = propertyService.createCommentWithAddress(address, commentsRequest);
+        boolean created = propertyService.createCommentWithAddress(PathInputParser.parseStringFromUrl(address),
+                commentsRequest);
         if (!created) {
             return ResponseEntity.badRequest().build();
         }

@@ -15,7 +15,7 @@ public class DateParserTest {
     @Test
     public void dateParser_successful() {
         String input = "08/08/2000";
-        LocalDate actualDate = DateParser.parseDate(input);
+        LocalDate actualDate = DateParser.parseDateFromCsv(input);
 
         assertEquals(LocalDate.of(2000,Month.AUGUST,8), actualDate);
     }

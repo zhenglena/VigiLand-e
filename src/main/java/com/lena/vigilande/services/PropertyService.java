@@ -1,17 +1,14 @@
 package com.lena.vigilande.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lena.vigilande.dao.PropertyDao;
 import com.lena.vigilande.dtos.CommentsRequest;
 import com.lena.vigilande.dtos.ScofflawsResponse;
 import com.lena.vigilande.dtos.ViolationsResponse;
-import com.lena.vigilande.ingest.IngestRunner;
 import com.lena.vigilande.mappers.ViolationsMapper;
 import com.lena.vigilande.pojos.Scofflaw;
 import com.lena.vigilande.pojos.Violation;
-import org.apache.coyote.Request;
+import com.lena.vigilande.util.PathInputParser;
+import com.lena.vigilande.util.PathInputChecker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +31,6 @@ public class PropertyService {
      * @return an Optional ViolationsResponse
      */
     public Optional<ViolationsResponse> getViolationsResponseByAddress(String address) {
-        if (address.isEmpty()) {
-            log.error("Address string s empty");
-            return Optional.empty();
-        }
-
         List<Violation> violationsResult = propertyDao.findViolationsByAddress(address);
         Scofflaw scofflaw = propertyDao.findScofflawByAddress(address);
 
@@ -53,12 +45,13 @@ public class PropertyService {
     }
 
     /**
-     * Passes a LocalDate object into PropertyDao.
+     * Passes a LocalDate object into PropertyDao. Returns an empty optional if no Scofflaws found.
      * @param fromDate the date to be queried (inclusive)
      * @return an Optional ScofflawsResponse
      */
     public Optional<ScofflawsResponse> getScofflawsByDate(LocalDate fromDate) {
         List<Scofflaw> scofflawList = propertyDao.findScofflawsByDate(fromDate);
+
         if (scofflawList.isEmpty()) {
             log.info("No scofflaws found on or after date= {}", fromDate.toString());
             return Optional.empty();
@@ -74,16 +67,12 @@ public class PropertyService {
      * @return a boolean of whether the comment was posted or not
      */
     public boolean createCommentWithAddress(String address, CommentsRequest request) {
-        if (address.isEmpty()) {
-            log.error("Address string is empty");
-            return false;
-        }
         if (request.getComment().isEmpty()) {
-            log.error("Request has an empty comment");
+            log.error("CommentRequest has an empty comment");
             return false;
         }
         if (request.getAuthor().isEmpty()) {
-            log.error("Request has an empty author");
+            log.error("CommentRequest has an empty author");
             return false;
         }
 
