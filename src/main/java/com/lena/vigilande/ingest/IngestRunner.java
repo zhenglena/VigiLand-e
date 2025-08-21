@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 
 import java.nio.file.Paths;
 
+/**
+ * This will input the paths of the CSV files and load it into the IngestService script, which then reads the CSV files and writes it to the database.
+ * It is only triggered by running the Spring profile 'ingest'.
+ * This script only needs to be run when starting up for the first time or when updated CSVs are loaded into the application.
+ */
 @Component
 @Profile("ingest")
 public class IngestRunner implements CommandLineRunner {

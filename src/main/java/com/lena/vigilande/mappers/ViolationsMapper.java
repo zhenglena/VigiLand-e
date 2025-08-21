@@ -7,6 +7,9 @@ import com.lena.vigilande.pojos.Violation;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Mapper class to map data from GET endpoint into a ViolationsResponse object.
+ */
 public class ViolationsMapper {
     public static Optional<ViolationsResponse> mapToResponse(List<Violation> violationList, Scofflaw scofflaw) {
         boolean scofflawStatus = scofflaw != null;

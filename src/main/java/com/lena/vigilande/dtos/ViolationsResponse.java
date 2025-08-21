@@ -7,6 +7,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Forms the response body for the GET endpoint
+ */
 public class ViolationsResponse {
     @JsonProperty("last_violation_date")
     private LocalDate lastViolationDate;

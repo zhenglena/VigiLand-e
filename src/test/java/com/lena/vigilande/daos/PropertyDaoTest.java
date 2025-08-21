@@ -17,6 +17,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Make sure application-test.properties is properly configured to use vigilande_test_db.
+ * Can only be run once unless the tables are manually truncated.
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 public class PropertyDaoTest {

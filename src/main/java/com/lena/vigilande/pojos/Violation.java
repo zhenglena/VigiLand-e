@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.Objects;
 
-//todo: make a builder?
 public class Violation {
     @JsonProperty("violation_date")
     private LocalDate violationDate;

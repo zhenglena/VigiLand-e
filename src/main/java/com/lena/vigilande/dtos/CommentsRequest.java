@@ -1,5 +1,8 @@
 package com.lena.vigilande.dtos;
 
+/**
+ * Forms the request body for the POST endpoint.
+ */
 public class CommentsRequest {
     private String comment;
     private String author;
