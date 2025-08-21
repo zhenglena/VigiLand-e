@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
-//TODO: handle exceptions or null results
 @Repository
 public class PropertyDao {
 
