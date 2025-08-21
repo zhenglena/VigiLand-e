@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 
-//todo: implement batch writing, perhaps in a dao?
+//todo: implement batch writing
 
 @Service
 public class IngestService {
