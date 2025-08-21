@@ -25,7 +25,7 @@ psql -U postgres
 CREATE DATABASE vigilande_db;
 \q
 ```
-### Step 2: Configure credentials in application.properties
+### Step 2: Configure credentials in main/application.properties
 ```
 spring.application.name=vigilande
 spring.datasource.url=jdbc:postgresql://localhost:5432/vigilande_db
@@ -47,7 +47,7 @@ spring.sql.init.schema-locations=classpath:TableSchema.sql
 ./gradlew bootRun
 ```
 
-## Integration Test Setup
+## Integration Test Setup to test PropertyDaoTest ONLY
 ### Step 1: Create a test database
 * Run these commands in your terminal:
 ``` 
@@ -55,7 +55,7 @@ psql -U postgres
 CREATE DATABASE vigilande_db_test;
 \q
 ```
-### Step 2: Configure datasource in application.properties
+### Step 2: Configure datasource in test/resources/application-test.properties
 ```
 spring.application.name=vigilande
 spring.datasource.url=jdbc:postgresql://localhost:5432/vigilande_db_test <-- new
@@ -66,16 +66,7 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 spring.sql.init.mode=always
 spring.sql.init.schema-locations=classpath:TableSchema.sql
 ```
-### Step 3: Feed the test CSV file paths into IngestRunner.java
-```
-script.ingestToScofflaws("datasets/Scofflaw_list_TEST.csv");
-script.ingestToViolations("datasets/Building_Violations_TEST.csv");
-```
-### Step 4: Run ingestion script
-```
-./gradlew bootRun --args='--spring.profiles.active=ingest'
-```
-### Step 5: Run tests
+### Step 5: Run tests in PropertyDao
 
 ## Built With
 * Spring Boot
@@ -139,10 +130,14 @@ comment : text
 * Results are passed back up as responses and returned to the client as a JSON.
 
 ## Profiles
-* `ingest` profile — Loads the dataset into the database and then exits when done.
 * default profile — Runs the application normally, exposing the API.
+* `ingest` profile — Loads the dataset into the database and then exits when done.
+* `test` profile — Points datasource to a test database filled with test data for integration testing.
 
 ## Future Improvements
-
+* Containerizing the API for consistent environments
+* Improve test coverage
+* Do batch updates for faster ingesting of CSV data
+* Put SQL commands into a properties file for easier configurability
 
 
