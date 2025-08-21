@@ -3,21 +3,45 @@ package com.lena.vigilande.daos;
 import com.lena.vigilande.dao.PropertyDao;
 import com.lena.vigilande.dtos.CommentsRequest;
 import com.lena.vigilande.helpers.TestHelpers;
+import com.lena.vigilande.ingest.IngestService;
 import com.lena.vigilande.pojos.Scofflaw;
 import com.lena.vigilande.pojos.Violation;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class PropertyDaoTest {
     @Autowired
     private PropertyDao dao;
 
+    @Autowired
+    private IngestService service;
+
+    @BeforeAll
+    static void setup(@Autowired IngestService ingestService) throws Exception {
+        // paths to test CSV files in src/test/resources
+        String violationsCsv =
+                Paths.get(PropertyDaoTest.class.getClassLoader()
+                                .getResource("Building_Violations_TEST.csv").toURI())
+                        .toString();
+
+        String scofflawsCsv =
+                Paths.get(PropertyDaoTest.class.getClassLoader()
+                                .getResource("Scofflaw_list_TEST.csv").toURI())
+                        .toString();
+
+        ingestService.ingestToViolations(violationsCsv);
+        ingestService.ingestToScofflaws(scofflawsCsv);
+    }
 
     @Test
     public void findViolationsByAddress_successful_returnsList() {
