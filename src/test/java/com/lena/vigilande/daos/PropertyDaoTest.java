@@ -23,6 +23,9 @@ public class PropertyDaoTest {
     @Autowired
     private PropertyDao dao;
 
+    @Autowired
+    private IngestService service;
+
     @BeforeAll
     static void setup(@Autowired IngestService ingestService) throws Exception {
         // paths to test CSV files in src/test/resources
