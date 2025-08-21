@@ -6,6 +6,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Paths;
+
 @Component
 @Profile("ingest")
 public class IngestRunner implements CommandLineRunner {
@@ -20,8 +22,15 @@ public class IngestRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("Writing to database from csv files...");
 
-        script.ingestToScofflaws("datasets/Building_Code_Scofflaw_List_20250807.csv");
-        script.ingestToViolations("datasets/Building_Violations_20250815.csv");
+        String pathToViolationsCsv = Paths.get(
+                getClass().getClassLoader().getResource("Building_Violations_20250815.csv").toURI()
+        ).toString();
+        String pathToScofflawsCsv = Paths.get(
+                getClass().getClassLoader().getResource("Building_Code_Scofflaw_List_20250807.csv").toURI()
+        ).toString();
+
+        script.ingestToScofflaws(pathToScofflawsCsv);
+        script.ingestToViolations(pathToViolationsCsv);
 
         log.info("Finished writing!");
         System.exit(0);
