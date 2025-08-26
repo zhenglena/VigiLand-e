@@ -19,6 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Make sure application-test.properties is properly configured.
+// THIS IS AN INTEGRATION TEST
 @SpringBootTest
 @ActiveProfiles("test")
 public class PropertyDaoTest {
