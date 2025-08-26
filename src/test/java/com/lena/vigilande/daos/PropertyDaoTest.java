@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.nio.file.Paths;
@@ -27,8 +28,11 @@ public class PropertyDaoTest {
     @Autowired
     private PropertyDao dao;
 
+
     @BeforeAll
-    static void setup(@Autowired IngestService ingestService) throws Exception {
+    static void setup(@Autowired IngestService ingestService, @Autowired JdbcTemplate template) throws Exception {
+        template.update("TRUNCATE TABLE Violations, Scofflaws, Comments"); //truncate tables before writing test data
+
         String violationsCsv =
                 Paths.get(PropertyDaoTest.class.getClassLoader()
                                 .getResource("Building_Violations_TEST.csv").toURI())

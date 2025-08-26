@@ -3,10 +3,12 @@ package com.lena.vigilande.dao;
 import com.lena.vigilande.dtos.CommentsRequest;
 import com.lena.vigilande.pojos.Scofflaw;
 import com.lena.vigilande.pojos.Violation;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,14 +29,14 @@ public class PropertyDao {
     public List<Violation> findViolationsByAddress(String address) {
         String sql = "SELECT violation_date, violation_code, violation_description, violation_inspector_comments," +
                 "violation_status FROM Violations WHERE address = ? ORDER BY violation_date DESC";
-        return template.query(sql, new Object[]{address},
-                (rs, rowNum) -> new Violation(
-                                        rs.getDate("violation_date").toLocalDate(),
-                                        rs.getString("violation_code"),
-                                        rs.getString("violation_description"),
-                                        rs.getString("violation_inspector_comments"),
-                                        rs.getString("violation_status")
-                ));
+
+        return template.query(sql, (rs, rowNum) -> new Violation(
+                rs.getDate("violation_date").toLocalDate(),
+                rs.getString("violation_code"),
+                rs.getString("violation_description"),
+                rs.getString("violation_inspector_comments"),
+                rs.getString("violation_status")
+        ), new SqlParameterValue(Types.VARCHAR, address));
     }
 
     /**
@@ -45,15 +47,14 @@ public class PropertyDao {
     public Scofflaw findScofflawByAddress(String address) {
        String sql = "SELECT s.building_list_date FROM Scofflaws s WHERE address = ? LIMIT 1";
 
-       try {
-           return template.queryForObject(sql, new Object[]{address},
-                   (rs, rowNum) -> new Scofflaw(
+        try {
+            return template.queryForObject(sql, (rs, rowNum) -> new Scofflaw(
                            address,
                            rs.getDate("building_list_date").toLocalDate()
-                   ));
-       } catch (EmptyResultDataAccessException e) {
-           return null;
-       }
+                   ), new SqlParameterValue(Types.VARCHAR, address));
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return null;
+        }
 
     }
 
@@ -65,11 +66,10 @@ public class PropertyDao {
     public List<Scofflaw> findScofflawsByDate(LocalDate fromDate) {
         String sql = "SELECT s.address, s.building_list_date FROM Scofflaws s WHERE s.building_list_date >= ?";
 
-        return template.query(sql, new Object[]{fromDate},
-                (rs, rowNum) -> new Scofflaw(
-                        rs.getString("address"),
-                        rs.getDate("building_list_date").toLocalDate()
-                ));
+        return template.query(sql, (rs, rowNum) -> new Scofflaw(
+                rs.getString("address"),
+                rs.getDate("building_list_date").toLocalDate()
+        ), new SqlParameterValue(Types.DATE, fromDate));
     }
 
     /**
