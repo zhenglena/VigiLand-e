@@ -44,7 +44,7 @@ public class IngestServiceTest {
 
         Object[] args = captor.getValue(); // last row captured
         assertEquals("4362232", args[0]);
-        assertEquals(LocalDate.of(2025, Month.AUGUST, 15), args[1]); // update to match your test CSV
+        assertEquals(LocalDate.of(2025, Month.AUGUST, 15), args[1]);
         assertEquals("EV1110", args[2]);
         assertEquals("OPEN", args[3]);
         assertEquals("MAINTAIN OR REPAIR ELECT ELEVA", args[4]);

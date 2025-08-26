@@ -28,9 +28,11 @@ public class PropertyDao {
      */
     public List<Violation> findViolationsByAddress(String address) {
         String sql = "SELECT violation_date, violation_code, violation_description, violation_inspector_comments," +
-                "violation_status FROM Violations WHERE address = ? ORDER BY violation_date DESC";
+                "violation_status, id FROM Violations WHERE address = ? ORDER BY violation_date DESC";
 
         return template.query(sql, (rs, rowNum) -> new Violation(
+                rs.getString("id"),
+                address,
                 rs.getDate("violation_date").toLocalDate(),
                 rs.getString("violation_code"),
                 rs.getString("violation_description"),
@@ -45,12 +47,13 @@ public class PropertyDao {
      * @return a Scofflaw result
      */
     public Scofflaw findScofflawByAddress(String address) {
-       String sql = "SELECT s.building_list_date FROM Scofflaws s WHERE address = ? LIMIT 1";
+       String sql = "SELECT record_id, building_list_date FROM Scofflaws WHERE address = ? LIMIT 1";
 
         try {
             return template.queryForObject(sql, (rs, rowNum) -> new Scofflaw(
-                           address,
-                           rs.getDate("building_list_date").toLocalDate()
+                    rs.getString("record_id"),
+                    address,
+                    rs.getDate("building_list_date").toLocalDate()
                    ), new SqlParameterValue(Types.VARCHAR, address));
         } catch (IncorrectResultSizeDataAccessException e) {
             return null;
@@ -64,9 +67,10 @@ public class PropertyDao {
      * @return a List of Scofflaws
      */
     public List<Scofflaw> findScofflawsByDate(LocalDate fromDate) {
-        String sql = "SELECT s.address, s.building_list_date FROM Scofflaws s WHERE s.building_list_date >= ?";
+        String sql = "SELECT record_id, address, building_list_date FROM Scofflaws WHERE building_list_date >= ?";
 
         return template.query(sql, (rs, rowNum) -> new Scofflaw(
+                rs.getString("record_id"),
                 rs.getString("address"),
                 rs.getDate("building_list_date").toLocalDate()
         ), new SqlParameterValue(Types.DATE, fromDate));

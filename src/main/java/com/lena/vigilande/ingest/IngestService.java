@@ -1,5 +1,7 @@
 package com.lena.vigilande.ingest;
 
+import com.lena.vigilande.pojos.Scofflaw;
+import com.lena.vigilande.pojos.Violation;
 import com.lena.vigilande.util.PathInputParser;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -13,7 +15,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 
 //todo: implement batch writing
 
@@ -35,26 +41,36 @@ public class IngestService {
     public void ingestToViolations(String csvFilePath) throws IOException {
         try (
             Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
-                    .withFirstRecordAsHeader());
         ) {
-            for (CSVRecord record : csvParser) {
+            CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                    .setHeader()
+                    .build();
+
+            Collection<Violation> vCollection = new ArrayList<>();
+            String sqlCommand = "INSERT INTO Violations(id, violation_date, violation_code, violation_status, " +
+                    "violation_description, violation_inspector_comments, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            for (CSVRecord record : csvFormat.parse(reader)) {
                 String id = record.get("ID");
-                String violation_code = record.get("VIOLATION CODE");
-                String violation_status = record.get("VIOLATION STATUS");
-                String violation_description = record.get("VIOLATION DESCRIPTION");
-                String violation_inspector_comment = record.get("VIOLATION INSPECTOR COMMENTS");
-
-                LocalDate violation_date = PathInputParser.parseDateFromCsv(record.get("VIOLATION DATE"));
-
+                String code = record.get("VIOLATION CODE");
+                String status = record.get("VIOLATION STATUS");
+                String description = record.get("VIOLATION DESCRIPTION");
+                String comment = record.get("VIOLATION INSPECTOR COMMENTS");
+                LocalDate date = PathInputParser.parseDateFromCsv(record.get("VIOLATION DATE"));
                 String address = record.get("ADDRESS").trim().toUpperCase();
 
-                String sqlCommand = "INSERT INTO Violations(id, violation_date, violation_code, violation_status, " +
-                        "violation_description, violation_inspector_comments, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-                template.update(sqlCommand, id, violation_date, violation_code, violation_status,
-                        violation_description, violation_inspector_comment, address);
+                vCollection.add(new Violation(id, address, date, code, description, comment, status));
             }
+
+            template.batchUpdate(sqlCommand, vCollection, 1000, (PreparedStatement ps, Violation v) -> {
+                ps.setString(1, v.getId());
+                ps.setDate(2, Date.valueOf(v.getViolationDate()));
+                ps.setString(3, v.getViolationCode());
+                ps.setString(4, v.getViolationStatus());
+                ps.setString(5, v.getViolationDescription());
+                ps.setString(6, v.getViolationInspectorComments());
+                ps.setString(7, v.getAddress());
+            });
         }
     }
 
@@ -66,20 +82,27 @@ public class IngestService {
     public void ingestToScofflaws(String csvFilePath) throws IOException {
         try (
                 Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
-                        .withFirstRecordAsHeader());
         ) {
-            for (CSVRecord record : csvParser) {
-                String record_id = record.get("RECORD ID");
+            CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                    .setHeader()
+                    .build();
 
-                LocalDate building_list_date = PathInputParser.parseDateFromCsv(record.get("BUILDING LIST DATE"));
+            String sqlCommand = "INSERT INTO Scofflaws(record_id, building_list_date, address) VALUES (?, ?, ?)";
+            Collection<Scofflaw> sCollection = new ArrayList<>();
 
+            for (CSVRecord record : csvFormat.parse(reader)) {
+                String recordId = record.get("RECORD ID");
+                LocalDate date = PathInputParser.parseDateFromCsv(record.get("BUILDING LIST DATE"));
                 String address = record.get("ADDRESS").trim().toUpperCase();
 
-                String sqlCommand = "INSERT INTO Scofflaws(record_id, building_list_date, address) VALUES (?, ?, ?)";
-
-                template.update(sqlCommand, record_id, building_list_date, address);
+                sCollection.add(new Scofflaw(recordId, address, date));
             }
+
+            template.batchUpdate(sqlCommand, sCollection, 100, (PreparedStatement ps, Scofflaw s) -> {
+                ps.setString(1, s.getRecordId());
+                ps.setDate(2, Date.valueOf(s.getBuildingListDate()));
+                ps.setString(3, s.getAddress());
+            });
         }
     }
 }

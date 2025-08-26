@@ -1,11 +1,17 @@
 package com.lena.vigilande.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class Violation {
+    @JsonIgnore
+    private String id;
+    @JsonIgnore
+    private String address;
+
     @JsonProperty("violation_date")
     private LocalDate violationDate;
     @JsonProperty("violation_code")
@@ -17,13 +23,30 @@ public class Violation {
     @JsonProperty("violation_status")
     private String violationStatus;
 
-
-    public Violation(LocalDate violationDate, String violationCode, String violationDescription, String violationInspectorComments, String violationStatus) {
+    public Violation(String id, String address, LocalDate violationDate, String violationCode, String violationDescription, String violationInspectorComments, String violationStatus) {
+        this.id = id;
+        this.address = address;
         this.violationDate = violationDate;
         this.violationCode = violationCode;
         this.violationDescription = violationDescription;
         this.violationInspectorComments = violationInspectorComments;
         this.violationStatus = violationStatus;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public LocalDate getViolationDate() {

@@ -1,19 +1,30 @@
 package com.lena.vigilande.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class Scofflaw {
+    @JsonIgnore
+    private String recordId;
     private String address;
-
     @JsonProperty("building_list_date")
     private LocalDate buildingListDate;
 
-    public Scofflaw(String address, LocalDate buildingListDate) {
+    public Scofflaw(String recordId, String address, LocalDate buildingListDate) {
+        this.recordId = recordId;
         this.address = address;
         this.buildingListDate = buildingListDate;
+    }
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
     }
 
     public String getAddress() {
