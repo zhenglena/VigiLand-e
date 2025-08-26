@@ -4,10 +4,7 @@ import com.lena.vigilande.pojos.Scofflaw;
 import com.lena.vigilande.pojos.Violation;
 import com.lena.vigilande.util.PathInputParser;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +18,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 
-//todo: implement batch writing
-
 @Service
 public class IngestService {
-
-    private static final Logger log = LogManager.getLogger(IngestService.class);
     private final JdbcTemplate template;
 
     public IngestService(JdbcTemplate template) {
@@ -36,11 +29,11 @@ public class IngestService {
     /**
      * Reads from the Building Violations CSV file and writes to Postgres db.
      * @param csvFilePath String path to Building Violations CSV
-     * @throws IOException- If an I/O error occurs opening the filew
+     * @throws IOException- If an I/O error occurs opening the files
      */
     public void ingestToViolations(String csvFilePath) throws IOException {
         try (
-            Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
+            Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))
         ) {
             CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
                     .setHeader()
@@ -81,7 +74,7 @@ public class IngestService {
      */
     public void ingestToScofflaws(String csvFilePath) throws IOException {
         try (
-                Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
+                Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))
         ) {
             CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
                     .setHeader()
