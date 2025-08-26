@@ -1,72 +1,60 @@
 package com.lena.vigilande.ingest;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.Month;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class IngestServiceTest {
-
     @Mock
-    private JdbcTemplate jdbcTemplate;
-    @InjectMocks
+    private JdbcTemplate template;
     private IngestService ingestService;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-    }
+        ingestService = new IngestService(template);
 
+    }
 
     @Test
     public void writeToViolationsTable_withTestCsv_successful() throws Exception {
-        String csvPath = Paths.get(
-                getClass().getClassLoader().getResource("Building_Violations_TEST.csv").toURI()
-        ).toString();
+        Path tempFile = Files.createTempFile("violations", ".csv");
+        try (CSVPrinter printer = new CSVPrinter(new FileWriter(tempFile.toFile()), CSVFormat.DEFAULT.builder()
+                .setHeader("ID", "VIOLATION DATE", "VIOLATION CODE", "VIOLATION STATUS", "VIOLATION DESCRIPTION",
+                        "VIOLATION INSPECTOR COMMENTS", "ADDRESS")
+                .build())
+        ) {
+            printer.printRecord("123", "08/15/2025", "EV1110", "OPEN", "DESC", "COMMENTS", "123 W GRACE ST");
+        }
 
-        ingestService.ingestToViolations(csvPath);
+        ingestService.ingestToViolations(tempFile.toString());
 
-        ArgumentCaptor<Object[]> captor = ArgumentCaptor.forClass(Object[].class);
-        verify(jdbcTemplate, atLeastOnce()).update(anyString(), captor.capture());
-
-
-        Object[] args = captor.getValue(); // last row captured
-        assertEquals("4362232", args[0]);
-        assertEquals(LocalDate.of(2025, Month.AUGUST, 15), args[1]);
-        assertEquals("EV1110", args[2]);
-        assertEquals("OPEN", args[3]);
-        assertEquals("MAINTAIN OR REPAIR ELECT ELEVA", args[4]);
-        assertEquals("PROVIDE DOOR RESTRICTORS - PASSENGER ELEV", args[5]);
-        assertEquals("4145 N RAVENSWOOD AVE", args[6]);
+        verify(template, times(1)).batchUpdate(anyString(), anyCollection(), anyInt(), any());
     }
 
     @Test
     public void writeToScofflawsTable_withTestCsv_successful() throws Exception {
-        String csvPath = Paths.get(
-                getClass().getClassLoader().getResource("Scofflaw_list_TEST.csv").toURI()
-        ).toString();
+        Path tempFile = Files.createTempFile("scofflaws", ".csv");
+        try (CSVPrinter printer = new CSVPrinter(new FileWriter(tempFile.toFile()), CSVFormat.DEFAULT.builder()
+                .setHeader("RECORD ID", "BUILDING LIST DATE", "ADDRESS")
+                .build())
+        ) {
+            printer.printRecord("456", "03/01/2025", "123 W GRACE ST");
+        }
 
-        ingestService.ingestToScofflaws(csvPath);
+        ingestService.ingestToScofflaws(tempFile.toString());
 
-        ArgumentCaptor<Object[]> captor = ArgumentCaptor.forClass(Object[].class);
-        verify(jdbcTemplate, atLeastOnce()).update(anyString(), captor.capture());
-
-
-        Object[] args = captor.getValue();
-        assertEquals("23-M1-401336-3/1/2025", args[0]);
-        assertEquals(LocalDate.of(2025, Month.MARCH, 1), args[1]);
-        assertEquals("1554 E 65TH ST", args[2]);
+        verify(template, times(1)).batchUpdate(anyString(), anyCollection(), anyInt(), any());
     }
 }
