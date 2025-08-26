@@ -48,11 +48,11 @@ public class Scofflaw {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Scofflaw scofflaw = (Scofflaw) o;
-        return Objects.equals(getAddress(), scofflaw.getAddress()) && Objects.equals(getBuildingListDate(), scofflaw.getBuildingListDate());
+        return Objects.equals(getRecordId(), scofflaw.getRecordId()) && Objects.equals(getAddress(), scofflaw.getAddress()) && Objects.equals(getBuildingListDate(), scofflaw.getBuildingListDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAddress(), getBuildingListDate());
+        return Objects.hash(getRecordId(), getAddress(), getBuildingListDate());
     }
 }

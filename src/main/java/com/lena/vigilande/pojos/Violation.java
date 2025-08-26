@@ -94,11 +94,11 @@ public class Violation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Violation violation = (Violation) o;
-        return Objects.equals(getViolationDate(), violation.getViolationDate()) && Objects.equals(getViolationCode(), violation.getViolationCode()) && Objects.equals(getViolationDescription(), violation.getViolationDescription()) && Objects.equals(getViolationInspectorComments(), violation.getViolationInspectorComments()) && Objects.equals(getViolationStatus(), violation.getViolationStatus());
+        return Objects.equals(getId(), violation.getId()) && Objects.equals(getAddress(), violation.getAddress()) && Objects.equals(getViolationDate(), violation.getViolationDate()) && Objects.equals(getViolationCode(), violation.getViolationCode()) && Objects.equals(getViolationDescription(), violation.getViolationDescription()) && Objects.equals(getViolationInspectorComments(), violation.getViolationInspectorComments()) && Objects.equals(getViolationStatus(), violation.getViolationStatus());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getViolationDate(), getViolationCode(), getViolationDescription(), getViolationInspectorComments(), getViolationStatus());
+        return Objects.hash(getId(), getAddress(), getViolationDate(), getViolationCode(), getViolationDescription(), getViolationInspectorComments(), getViolationStatus());
     }
 }
