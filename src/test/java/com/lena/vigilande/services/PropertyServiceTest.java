@@ -1,30 +1,21 @@
 package com.lena.vigilande.services;
 
 import com.lena.vigilande.dao.PropertyDao;
-import com.lena.vigilande.dtos.CommentsRequest;
 import com.lena.vigilande.dtos.ScofflawsResponse;
 import com.lena.vigilande.dtos.ViolationsResponse;
 import com.lena.vigilande.helpers.TestHelpers;
-import com.lena.vigilande.mappers.ViolationsMapper;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
-@SpringBootTest
 public class PropertyServiceTest {
     @Mock
     private PropertyDao dao;
@@ -33,7 +24,7 @@ public class PropertyServiceTest {
 
     @BeforeEach
     public void setup() {
-        initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
     @Test
     public void getViolationsResponseByAddress_successful_returnsViolationsResponse() {
