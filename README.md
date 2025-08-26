@@ -21,8 +21,9 @@ and provides an additional endpoint for a user to write their own comment tied t
 ### Step 1: Create a database
 * Run these commands in your terminal:
 ``` 
-psql -U postgres
-CREATE DATABASE vigilande_db;
+psql -U postgres -d postgres
+CREATE ROLE <username> WITH LOGIN PASSWORD <password>;
+CREATE DATABASE vigilande_db OWNER <username>;
 \q
 ```
 ### Step 2: Configure credentials in main/application.properties
@@ -51,8 +52,8 @@ spring.sql.init.schema-locations=classpath:TableSchema.sql
 ### Step 1: Create a test database
 * Run these commands in your terminal:
 ``` 
-psql -U postgres
-CREATE DATABASE vigilande_db_test;
+psql -U postgres -d postgres
+CREATE DATABASE vigilande_db OWNER <username>;
 \q
 ```
 ### Step 2: Configure datasource in test/resources/application-test.properties
